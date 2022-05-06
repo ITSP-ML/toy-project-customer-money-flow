@@ -1,0 +1,24 @@
+name: toy-project-customer-money-flow
+channels:
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies: 
+  - pip 
+  - pip:
+    - -e .  # make the project editable package, conda >= 4.4 only
+    - --trusted-host pypi.python.org --trusted-host pypi.org --trusted-host files.pythonhosted.org # to avoid problems with proxies
+    #- mariadb
+    #- jupyter-dash
+    #- pdfkit # requires https://wkhtmltopdf.org/ to be installed separately and its bin subfolder added to PATH
+  - python=3
+  #- jupyter
+  #- jupyterlab
+  - pandas
+  - numpy
+  #- seaborn
+  - matplotlib
+  - make
+  - python-dotenv
+  - pyodbc
+  #- sqlalchemy
