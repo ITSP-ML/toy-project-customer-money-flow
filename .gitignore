@@ -7,7 +7,7 @@
 .vscode
 
 # data excluded from source control
-/data_dump/
+data_dump
 
 # never commit notebooks - convert them to .py first
 *.ipynb
