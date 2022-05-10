@@ -21,4 +21,5 @@ dependencies:
   - make
   - python-dotenv
   - pyodbc
+  - seaborn 
   #- sqlalchemy

@@ -114,7 +114,7 @@ def getCustomersByAffiliateData(selectCriteria, colGroups, affiliateCol, amountC
 
 
 
-def test_query(query) :
+def get_data_from_query(query) :
   
     ITDWHconn = MicrosoftSQLDBConnector('ITDWH').connect()
     final_query = parse_query(query)
