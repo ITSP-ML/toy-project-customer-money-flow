@@ -5,7 +5,6 @@
 
 # OPTIONAL: Load the "autoreload" extension so that code can change
 %load_ext autoreload
-
 # OPTIONAL: always reload modules so that as you change code in src, it gets loaded
 %autoreload 2
 
@@ -31,8 +30,6 @@ productid : 3
 
 
 # %%
-
-
 query = """Select * 
 from dimCustomerBalance
 where isCurrent = 1"""
@@ -106,11 +103,21 @@ from dimCustomerBalance join (Select db.customerID
 	where customerID % 176= 0 and year(createdate) = 2021  ) as samplecustomer on db.customerID = samplecustomer.customerID  
 	group by db.customerID having count(distinct db.productID) =  1) as final_ids
 on dimCustomerBalance.customerID = final_ids.customerID"""
-data = test_query(query)
-save_data(data , "balance_data_0")
+balance_data = test_query(query)
+save_data(balance_data , "balance_data_0")
 
 # %%
-data
+
+
+
+query = """select * 
+from dimCustomerBalance join (Select db.customerID  
+	from dimCustomerBalance as db join (select customerID 
+	from dimCustomer 
+	where customerID % 176= 0 and year(createdate) = 2021  ) as samplecustomer on db.customerID = samplecustomer.customerID  
+	group by db.customerID having count(distinct db.productID) =  1) as final_ids
+on dimCustomerBalance.customerID = final_ids.customerID"""
+balance_data = test_query(query)
+save_data(balance_data , "balance_data_0")
 
 # %%
-##
