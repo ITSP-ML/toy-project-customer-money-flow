@@ -1,6 +1,7 @@
 from ast import parse
 from weakref import finalize
 import pandas as pd
+from pyodbc import Cursor
 
 from src.dataload.database_connector import MicrosoftSQLDBConnector
 from src.dataload.str_query_parser import parse_query
@@ -112,7 +113,12 @@ def getCustomersByAffiliateData(selectCriteria, colGroups, affiliateCol, amountC
     df = pd.read_sql(query, ITDWHconn)
     return df
 
-
+def create_temporary_table(query) :
+  
+    ITDWHconn = MicrosoftSQLDBConnector('ITDWH').connect()
+    cursor = ITDWHconn.cursor()
+    final_query = parse_query(query)
+    cursor.execute(final_query) 
 
 def get_data_from_query(query) :
   

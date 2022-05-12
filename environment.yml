@@ -20,6 +20,6 @@ dependencies:
   - matplotlib
   - make
   - python-dotenv
-  - pyodbc
+  - pyodbc 
   - seaborn 
   #- sqlalchemy

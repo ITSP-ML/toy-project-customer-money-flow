@@ -77,6 +77,7 @@ bonus_data[bonus_data['customerID'] == 27796384]
 
 # %%
 final_data = pd.DataFrame(columns=['balanceID' ,'transaction_id', 'type' , 'value' ,'balance' ])
+
 final_data
 
 # %%
@@ -91,7 +92,7 @@ for index in balance_data.index :
     for i in temp_pay_data.index : 
         #print(transaction_type[payement_data.iloc[i ]])
         if check_date(temp_pay_data.loc[i , 'createdateUTC'] , balance_data.loc[index , "validFrom" ] , balance_data.loc[index , "validTo" ]) :
-            if temp_pay_data.loc[i , "transactionTypeID" ]in [1,4,5,6] :
+            if temp_pay_data.loc[i , "transactionTypeID" ]in [1,4,5,6] and temp_pay_data.loc[i , "transactionStatusID"  ] == 1:
                 bid = balance_data.loc[index , "balanceID"]
                 bamount = balance_data.loc[index , "balance"]
                 tid = temp_pay_data.loc[i , "paymentTransactionID"]	
@@ -113,7 +114,7 @@ for index in balance_data.index :
  
 
 # %%
-final_data
+final_data_2
 
 # %%
 ## 2nd method : try to work with vectors
@@ -154,7 +155,7 @@ def check_date(date , start , end) :
 j = 0 
 for index in balance_data.index : 
     #print(balance_data.iloc[index])
-    temp_bonus_data = bonus_data[bonus_data.customerID  == balance_data.loc[index , "customerID"]]
+    temp_bonus_data = bonus_data[bonus_data.customerID  == balance_data.loc[index , "customerID"]][['bonusID' , 'amount' ,'dateUtc' ]]
     for i in temp_bonus_data.index : 
         #print(transaction_type[payement_data.iloc[i ]])
         if check_date(temp_bonus_data.loc[i , 'dateUtc'] , balance_data.loc[index , "validFrom" ] , balance_data.loc[index , "validTo" ]) :
@@ -212,7 +213,7 @@ final_data_4
 
 # %%
 from scripts.utils import save_data
-save_data(final_data , 'row_equation_data')
+save_data(final_data , 'row_equation_data_1')
 
 # %%
 ## read_saved_data 
@@ -221,12 +222,17 @@ final_data = pd.read_csv('data_dump/row_equation_data.csv')
 final_data.head()
 
 # %%
+## check for the null values 
+print('value calumn null values : ' , final_data.value.isna().sum())
+print('balance calumn null values : ' , final_data.balance.isna().sum())
+
+# %%
 ## verify the equation : deposit-widthrow - refunds - chargeback - (bets - wins) + bonus = balance
 ## verify the equation : deposit-widthrow - refunds - chargeback - (grossprofit)  + bonus = balance
 def verify(df) : 
     left_side = 0 
-    b = df.loc[0, 'balance'	] 
-    bid = df.loc[0, 'balanceID'	] 
+    first_index = df.index[0]
+    balance = df.loc[first_index, 'balance'	] 
     for i in df.index : 
         t = df.loc[i , 'type'	] 
         v = df.loc[i , 'value'	] 
@@ -238,18 +244,45 @@ def verify(df) :
             left_side -= v
         elif t == 'bonus' : 
             left_side += v
-    test = b == left_side
-    return (test  , left_side , b ,bid ) 
+    
+    test = balance == left_side
+    row = pd.DataFrame({ 'left_side' : [left_side] , 'right_side' : [balance]  , 'equation_test': [test]})
+    return row
 
-x = final_data[final_data.balanceID == 491697609]
+x = final_data[final_data.balanceID == 491804323]
 
 # %%
 x
 
 # %%
+## test the verify function 
 verify(x) 
 
 # %%
+## aplly the verify function to each balance id 
+
+result = final_data.groupby('balanceID').apply(verify ).reset_index()[['balanceID'  , "left_side" ,"right_side" , "equation_test"]]
+result
+
+
+# %%
+## save the results into equationresult table 
+save_data(result , 'equation_results')
+
+
+# %%
+## final result 
+
+# balanceid || verified || 
+
+# %%
 ### next step 
-## update customer samples to only match the casino games (with productid) 
-## udate the payement transaction with the typeof transaction 
+## update customer samples to only match the casino games (with productid) //1
+## udate the payement transaction with the status transaction 
+
+
+# %%
+## insights 
+## when dropping the trasaction with status diff to 1 we loose almost half of the payements data points 
+##  most of the shoosen balances dosen't have any transactions 
+##
