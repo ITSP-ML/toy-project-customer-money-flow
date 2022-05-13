@@ -27,6 +27,8 @@ class MicrosoftSQLDBConnector(DataBaseConnector):
         connstring=f"Driver={self.driver};Server={self.host};Database={self.database};UID={self.user};PWD={self.password}"
 
         return pyodbc.connect(connstring)
+    
+
 
 
 # @attr.s
