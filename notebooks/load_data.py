@@ -12,7 +12,7 @@
 
 from src.dataload.str_query_parser import parse_query
 from src.dataload.customers_balance import get_data_from_query , create_temporary_table
-from scripts.utils import save_data
+from src.utils.utils import save_data
 import pandas as pd
 ## get the currient customer balance 
 ## we need to specify a simple of customers, datapoints(daily , weekly or something else) and in witch
@@ -49,6 +49,17 @@ from dimCustomerBalance as db join ##customersample WITH (NOLOCK) as customersam
 group by db.customerID having count(distinct db.productID )  = 1 
 """
 create_temporary_table(query)
+
+# %%
+### get customer data from dimcustmer
+query = """
+select * 
+from dimCustomer join ##TempTable as final_ids
+on dimCustomer.customerID = final_ids.customerID
+"""
+balance_data = get_data_from_query(query)
+save_data(balance_data , "customer_data_0")
+
 
 # %%
 ## get the balance data 
