@@ -112,7 +112,12 @@ def getCustomersByAffiliateData(selectCriteria, colGroups, affiliateCol, amountC
     df = pd.read_sql(query, ITDWHconn)
     return df
 
+def create_temporary_table(query) :
 
+    ITDWHconn = MicrosoftSQLDBConnector('ITDWH').connect()
+    cursor = ITDWHconn.cursor()
+    final_query = parse_query(query)
+    cursor.execute(final_query)
 
 def get_data_from_query(query) :
   

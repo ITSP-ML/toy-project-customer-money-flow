@@ -10,6 +10,7 @@ dependencies:
     - --trusted-host pypi.python.org --trusted-host pypi.org --trusted-host files.pythonhosted.org # to avoid problems with proxies
     #- mariadb
     #- jupyter-dash
+    -
     #- pdfkit # requires https://wkhtmltopdf.org/ to be installed separately and its bin subfolder added to PATH
   - python=3
   #- jupyter
@@ -18,6 +19,7 @@ dependencies:
   - numpy
   #- seaborn
   - matplotlib
+
   - make
   - python-dotenv
   - pyodbc
